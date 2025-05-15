@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 
 // Import uuid
 import { v4 as uuidV4 } from 'uuid';
@@ -28,8 +28,9 @@ export class ReportService {
     const foundData = data.report.find(
       (report) => report.id === id && report.type === type,
     );
-    if (!foundData) return;
-    else return new ReportResponseDTO(foundData);
+    if (!foundData) {
+      throw new NotFoundException(`Report with ID ${id} not found`);
+    } else return new ReportResponseDTO(foundData);
     // return foundData ? foundData : { status: 404, message: 'No Data Found' };
   }
 
@@ -55,7 +56,9 @@ export class ReportService {
     const foundAt: number = data.report.findIndex(
       (report) => report.id === id && report.type === reportType,
     );
-    if (foundAt === -1) return;
+    if (foundAt === -1) {
+      throw new NotFoundException(`Report with ID ${id} not found`);
+    }
     // if (foundAt === -1) return { message: 'Data not Found' };
     const { amount, source } = reportData;
     const newReport = {
